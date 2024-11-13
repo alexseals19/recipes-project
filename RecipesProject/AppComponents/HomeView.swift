@@ -19,12 +19,19 @@ struct HomeView: View {
     
     @StateObject private var viewModel: HomeViewModel
     
+    let columns = [GridItem(.flexible()), GridItem(.flexible())]
+    
     // MARK: - Body
     
     var body: some View {
-        LazyVStack {
-            ForEach(viewModel.recipes) { recipe in
-                Text(recipe.name)
+        
+        ZStack {
+            ScrollView(showsIndicators: false) {
+                LazyVGrid(columns: columns) {
+                    ForEach(viewModel.recipes) { recipe in
+                        RecipeCellView(recipe: recipe)
+                    }
+                }
             }
         }
         .onAppear {
