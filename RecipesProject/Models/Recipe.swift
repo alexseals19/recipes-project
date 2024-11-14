@@ -6,26 +6,52 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Recipe: Codable, Hashable, Identifiable {
     
     let cuisine: String
     let name: String
-    let photoUrlLarge: String?
-    let id: UUID
+    let photoUrlLarge: URL?
+    let photoUrlSmall: URL?
+    let uuid: UUID
+    let sourceUrl: URL?
+    let youtubeUrl: URL?
     
-    enum CodingKeys: String, CodingKey {
-        case cuisine
-        case name
-        case photoUrlLarge = "photo_url_large"
-        case id = "uuid"
-    }
-    
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.cuisine = try container.decode(String.self, forKey: .cuisine)
-        self.name = try container.decode(String.self, forKey: .name)
-        self.photoUrlLarge = try container.decodeIfPresent(String.self, forKey: .photoUrlLarge)
-        self.id = try container.decode(UUID.self, forKey: .id)
+    var id: UUID {
+        uuid
+    }   
+}
+
+extension Recipe {
+    var country: String {
+        switch cuisine {
+        case "British":
+            return "UK"
+        case "American":
+            return "USA"
+        case "Canadian":
+            return "CA"
+        case "French":
+            return "FR"
+        case "Italian":
+            return "IT"
+        case "Tunisian":
+            return "TU"
+        case "Malaysian":
+            return "MY"
+        case "Greek":
+            return "GR"
+        case "Polish":
+            return "PO"
+        case "Russian":
+            return "RU"
+        case "Portuguese":
+            return "PG"
+        case "Croatian":
+            return "CR"
+        default:
+            return "USA"
+        }
     }
 }

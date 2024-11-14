@@ -8,5 +8,5 @@
 import Foundation
 
 protocol ImageService {
-    func fetchImage(from: String) async throws -> Data
+    func fetchImage(from: URL) async throws -> Data
 }
