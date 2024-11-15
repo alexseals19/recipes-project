@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct RecipeCellView: View {
     
@@ -22,30 +23,36 @@ struct RecipeCellView: View {
     @State private var isShowingDetailView: Bool = false
     
     @Namespace private var namespace
-    
-    @State private var image = Image(systemName: "waveform")
         
     var body: some View {
         ZStack {
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: .infinity)
-                .clipShape(.rect(cornerRadius: 25))
-                .overlay {
-                    if isShowingDetailView {
-                        recipeDetailOverlay
-                    } else {
-                        recipeTitleOverlay
+            WebImage(url: recipe.thumbnailImageUrl) { image in
+                image.resizable()
+            } placeholder: {
+                RoundedRectangle(cornerRadius: 25)
+                    .foregroundStyle(.thinMaterial)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .overlay {
+                        Image(systemName: "photo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 50, height: 50)
                     }
+            }
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(maxWidth: .infinity)
+            .clipShape(.rect(cornerRadius: 25))
+            .overlay {
+                if isShowingDetailView {
+                    recipeDetailOverlay
+                } else {
+                    recipeTitleOverlay
                 }
+            }
         }
         .onAppear {
-            if let url = recipe.photoUrlLarge {
-                image = getImage(for: url)
-            } else if let url = recipe.photoUrlSmall {
-                image = getImage(for: url)
-            }
+            
         }
     }
     
@@ -93,17 +100,17 @@ struct RecipeCellView: View {
             }
     }
     
-    func getImage(for url: URL) -> Image {
-        Task {
-            let data = try await DefaultImageService().fetchImage(from: url)
-            guard let tempImage = UIImage( data: data) else {
-                return Image(systemName: "xmark")
-            }
-            image = Image(uiImage: tempImage)
-            return image
-        }
-        return Image(systemName: "xmark")
-    }
+//    func getImage(for url: URL) -> Image {
+//        Task {
+//            let data = try await DefaultImageService().fetchImage(from: url)
+//            guard let tempImage = UIImage( data: data) else {
+//                return Image(systemName: "xmark")
+//            }
+//            image = Image(uiImage: tempImage)
+//            return image
+//        }
+//        return Image(systemName: "xmark")
+//    }
 }
 
 #Preview {

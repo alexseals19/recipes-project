@@ -21,7 +21,12 @@ struct HomeView: View {
     
     @State private var refreshRotation = 0.0
     
-    let columns = [GridItem(.flexible()), GridItem(.flexible())]
+    private var isListEmpty: Bool {
+        viewModel.recipes.isEmpty
+    }
+    
+    private let hapticImpact = UIImpactFeedbackGenerator(style: .heavy)
+    private let columns = [GridItem(.flexible()), GridItem(.flexible())]
     
     // MARK: - Body
     
@@ -29,7 +34,7 @@ struct HomeView: View {
         
         ZStack {
             ScrollView(showsIndicators: false) {
-                VStack {
+                LazyVStack {
                     Image(systemName: "arrow.clockwise")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -46,6 +51,7 @@ struct HomeView: View {
                     .padding(.bottom, 28)
                 }
             }
+            .scrollDisabled(isListEmpty)
             .refreshable {
                 withAnimation(.interpolatingSpring(stiffness: 10, damping: 5, initialVelocity: 10)) {
                     refreshRotation += 360.0
@@ -62,10 +68,59 @@ struct HomeView: View {
                     .foregroundStyle(.ultraThinMaterial)
                 Spacer()
                 Rectangle()
-                    .frame(maxWidth: .infinity, maxHeight: 25)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
                     .foregroundStyle(.ultraThinMaterial)
+                    .overlay {
+                        HStack {
+                            Spacer()
+                            Button {
+                                viewModel.sortOption = .name
+                            } label: {
+                                Text("NAME")
+                            }
+                            Spacer()
+                            Button {
+                                viewModel.sortOption = .cuisine
+                            } label: {
+                                Text("CUISINE")
+                            }
+                            Spacer()
+                        }
+                    }
+            }
+            
+            if viewModel.recipes.isEmpty {
+                VStack {
+                    Button {
+                        hapticImpact.impactOccurred()
+                        withAnimation(.interpolatingSpring(stiffness: 10, damping: 5, initialVelocity: 10)) {
+                            refreshRotation += 360.0
+                        }
+                        Task {
+                            await viewModel.onAppear()
+                        }
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                            .rotationEffect(.degrees(refreshRotation))
+                            .padding(.top, 30)
+                    }
+                    .foregroundStyle(.primary)
+                    .padding(25)
+                    Text("There are no recipes to show at this time.")
+                        .font(.headline)
+                    Text("Please refresh to try again.")
+                        .font(.headline)
+                }
             }
         }
+        .alert(viewModel.alertTitle, isPresented: $viewModel.isAlertShown, actions: {
+            Button("OK", role: .cancel) {}
+        }, message: {
+            Text(viewModel.alertMessage)
+        })
         .onAppear {
             Task {
                 await viewModel.onAppear()
