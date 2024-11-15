@@ -20,7 +20,17 @@ struct Recipe: Codable, Hashable, Identifiable {
     
     var id: UUID {
         uuid
-    }   
+    }
+    
+    var thumbnailImageUrl: URL? {
+        if let photoUrlLarge {
+            return photoUrlLarge
+        } else if let photoUrlSmall {
+            return photoUrlSmall
+        } else {
+            return nil
+        }
+    }
 }
 
 extension Recipe {

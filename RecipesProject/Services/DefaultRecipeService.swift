@@ -11,11 +11,11 @@ class DefaultRecipeService: RecipeService {
 
     // MARK: - API
     
-    func fetchRecipes() async throws -> [Recipe] {
+    func fetchRecipes(by sortOption: SortOption) async throws -> [Recipe] {
         let url = try urlService.makeURL()
         let data = try await networkService.get(from: url)
         let response: Response = try decode(data: data)
-        return response.recipes
+        return sortedRecipes(recipes: response.recipes, by: sortOption)
     }
     
     init(networkService: NetworkService, urlService: URLService) {
@@ -35,6 +35,24 @@ class DefaultRecipeService: RecipeService {
     }()
     
     // MARK: - Functions
+    
+    private func sortedRecipes(recipes: [Recipe], by sortOption: SortOption) -> [Recipe] {
+        
+        var sortedRecipes: [Recipe] = []
+        
+        switch sortOption {
+        case .name:
+            sortedRecipes = recipes.sorted { (lhs: Recipe, rhs: Recipe) -> Bool in
+                return lhs.name < rhs.name
+            }
+        case .cuisine:
+            sortedRecipes = recipes.sorted { (lhs: Recipe, rhs: Recipe) -> Bool in
+                return lhs.cuisine < rhs.cuisine
+            }
+        }
+        
+        return sortedRecipes
+    }
     
     private func decode<T: Decodable>(data: Data) throws -> T {
         do {
