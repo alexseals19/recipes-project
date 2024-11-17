@@ -28,4 +28,6 @@ struct DefaultURLService: URLService {
     private let scheme = "https"
     private let host = "d3jbb8n5wk0qxi.cloudfront.net"
     private let endpoint = "/recipes.json"
+    private let malformedEndpoint = "/recipes-malformed.json"
+    private let emptyEndpoint = "/recipes-empty.json"
 }
