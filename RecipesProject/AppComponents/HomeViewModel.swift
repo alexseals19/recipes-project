@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 @MainActor
 class HomeViewModel: ObservableObject {
@@ -20,9 +21,18 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    @Published var sortOption: SortOption = .name {
-        didSet {
-            sortRecipes()
+    @Published var sortOption: SortOption = .name
+        
+    @Published var searchText: String = ""
+        
+    var recipesFiltered: [Recipe] {
+        if searchText.isEmpty {
+            return recipes
+        } else {
+            return recipes.filter {
+                $0.name.lowercased().contains(searchText.lowercased()) ||
+                $0.cuisine.lowercased().contains(searchText.lowercased())
+            }
         }
     }
     
@@ -38,7 +48,10 @@ class HomeViewModel: ObservableObject {
         await fetchRecipes()
     }
     
-    func sortRecipes() {
+    func sortRecipes(by sortOption: SortOption) {
+        
+        self.sortOption = sortOption
+        
         switch sortOption {
         case .name:
             recipes.sort { (lhs: Recipe, rhs: Recipe) -> Bool in
@@ -54,8 +67,6 @@ class HomeViewModel: ObservableObject {
     init(recipeService: RecipeService) {
         self.recipeService = recipeService
     }
-    
-    
     
     // MARK: - Properties
     
@@ -89,7 +100,7 @@ class HomeViewModel: ObservableObject {
     
 }
 
-enum SortOption {
-    case name
-    case cuisine
+enum SortOption: String {
+    case name = "Name"
+    case cuisine = "Cuisine"
 }

@@ -23,9 +23,15 @@ struct RecipeCellView: View {
     @State private var isShowingDetailView: Bool = false
     
     @Namespace private var namespace
+    
+    //MARK: - Body
         
     var body: some View {
-        ZStack {
+        Button {
+            withAnimation(.linear(duration: 0.2)) {
+                isShowingDetailView.toggle()
+            }
+        } label: {
             WebImage(url: recipe.thumbnailImageUrl) { image in
                 image.resizable()
             } placeholder: {
@@ -45,44 +51,36 @@ struct RecipeCellView: View {
             .clipShape(.rect(cornerRadius: 25))
             .overlay {
                 if isShowingDetailView {
-                    recipeDetailOverlay
+                    recipeDetailOverlayView
                 } else {
-                    recipeTitleOverlay
+                    recipeTitleOverlayView
                 }
             }
         }
-        .onAppear {
-            
-        }
+        .foregroundStyle(.primary)
     }
     
-    var recipeTitleOverlay: some View {
+    private var recipeTitleOverlayView: some View {
         VStack {
             HStack {
-                Button {
-                    withAnimation(.linear(duration: 0.2)) {
-                        isShowingDetailView.toggle()
-                    }
-                } label: {
-                    HStack {
-                        Text(recipe.name)
-                            .font(.subheadline)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                        Image(systemName: "line.3.horizontal.decrease.circle")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 15, height: 15)
-                            .padding(.vertical, 5)
-                    }
-                    .padding(EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10))
-                    .background(
-                        Capsule()
-                            .foregroundStyle(.thinMaterial)
-                            .matchedGeometryEffect(id: "detail", in: namespace)
-                    )
-                    .padding(10)
+                HStack {
+                    Text(recipe.name)
+                        .font(.subheadline)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 15, height: 15)
+                        .padding(.vertical, 5)
                 }
+                .padding(EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10))
+                .background(
+                    Capsule()
+                        .foregroundStyle(.thinMaterial)
+                        .matchedGeometryEffect(id: "detail", in: namespace)
+                )
+                .padding(10)
                 .foregroundStyle(.primary)
                 Spacer()
             }
@@ -90,7 +88,7 @@ struct RecipeCellView: View {
         }
     }
     
-    var recipeDetailOverlay: some View {
+    private var recipeDetailOverlayView: some View {
         RoundedRectangle(cornerRadius: 25)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .foregroundStyle(.ultraThinMaterial)
@@ -99,20 +97,8 @@ struct RecipeCellView: View {
                 RecipeDetailView(recipe: recipe, detailSelected: $isShowingDetailView)
             }
     }
-    
-//    func getImage(for url: URL) -> Image {
-//        Task {
-//            let data = try await DefaultImageService().fetchImage(from: url)
-//            guard let tempImage = UIImage( data: data) else {
-//                return Image(systemName: "xmark")
-//            }
-//            image = Image(uiImage: tempImage)
-//            return image
-//        }
-//        return Image(systemName: "xmark")
-//    }
 }
 
 #Preview {
-    RecipeCellView(recipe: Recipe.recipeFixture)
+    RecipeCellView(recipe: Recipe.rockCakesFixture)
 }

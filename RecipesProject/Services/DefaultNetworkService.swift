@@ -15,9 +15,6 @@ class DefaultNetworkService: NetworkService {
         do {
             let (data, response) = try await urlSession.data(from: url, delegate: nil)
             try verify(response: response)
-//            if let jsonString = data.prettyPrintedJSONString {
-//                print(jsonString)
-//            }
             return data
         } catch {
             if let error = error as? AppError, error == .invalidResponse {

@@ -11,7 +11,12 @@ import SwiftUI
 struct RecipesProjectApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView(recipeService: DefaultRecipeService(networkService: DefaultNetworkService(urlSession: URLSession(configuration: .default)), urlService: DefaultURLService()))
+            HomeView(
+                recipeService: DefaultRecipeService(
+                    networkService: DefaultNetworkService(urlSession: URLSession(configuration: .default)),
+                    urlService: DefaultURLService()
+                )
+            )
         }
     }
 }
