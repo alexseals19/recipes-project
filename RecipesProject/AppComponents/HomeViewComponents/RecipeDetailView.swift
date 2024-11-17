@@ -26,12 +26,15 @@ struct RecipeDetailView: View {
     
     var body: some View {
         VStack {
+            
             HStack(alignment: .top) {
                 Text(recipe.name)
                     .font(.title3)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
+                
                 Spacer()
+                
                 Button {
                     withAnimation(.linear(duration: 0.2)) {
                         detailSelected.toggle()
@@ -45,17 +48,22 @@ struct RecipeDetailView: View {
             VStack {
                 Text("Cuisine: \(recipe.cuisine)")
                     .font(.caption)
+                
                 Spacer()
+                
                 Image(recipe.country)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .opacity(0.5)
+                
                 Spacer()
+                
                 if recipe.youtubeUrl != nil || recipe.sourceUrl != nil {
                     Text("Want to make this?")
                         .font(.caption)
                 }
+                
                 HStack {
                     Spacer()
                     if let youtubeUrl = recipe.youtubeUrl {
@@ -66,7 +74,9 @@ struct RecipeDetailView: View {
                                 .frame(width: 30, height: 30)
                         }
                     }
+                    
                     Spacer()
+                    
                     if let sourceUrl = recipe.sourceUrl {
                         Link(destination: sourceUrl) {
                             Image(systemName: "link")
@@ -86,5 +96,5 @@ struct RecipeDetailView: View {
 }
 
 #Preview {
-    RecipeDetailView(recipe: Recipe.recipeFixture, detailSelected: .constant(true))
+    RecipeDetailView(recipe: Recipe.rockCakesFixture, detailSelected: .constant(true))
 }
