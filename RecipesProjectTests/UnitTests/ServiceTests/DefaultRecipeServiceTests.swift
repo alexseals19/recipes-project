@@ -20,7 +20,7 @@ final class DefaultRecipeServiceTests: XCTestCase {
         
         let sut = DefaultRecipeService(networkService: mockNetworkService, urlService: mockURLService)
         
-        let result = try await sut.fetchRecipes(by: .name)
+        let result = try await sut.fetchRecipes()
         
         XCTAssertNotNil(result, "result should not be nil")
     }
@@ -35,7 +35,7 @@ final class DefaultRecipeServiceTests: XCTestCase {
         
         let sut = DefaultRecipeService(networkService: mockNetworkService, urlService: mockURLService)
         
-        await XCTAssertThrowsError(try await sut.fetchRecipes(by: .name))
+        await XCTAssertThrowsError(try await sut.fetchRecipes())
     }
     
     func test_fetchRecipes_networkError_throws() async throws {
@@ -48,7 +48,7 @@ final class DefaultRecipeServiceTests: XCTestCase {
         
         let sut = DefaultRecipeService(networkService: mockNetworkService, urlService: mockURLService)
         
-        await XCTAssertThrowsError(try await sut.fetchRecipes(by: .name)) { error in
+        await XCTAssertThrowsError(try await sut.fetchRecipes()) { error in
             XCTAssertEqual(error as? AppError, .network, "Error thrown should be network")
         }
     }
@@ -63,7 +63,7 @@ final class DefaultRecipeServiceTests: XCTestCase {
         
         let sut = DefaultRecipeService(networkService: mockNetworkService, urlService: mockURLService)
         
-        await XCTAssertThrowsError(try await sut.fetchRecipes(by: .name)) { error in
+        await XCTAssertThrowsError(try await sut.fetchRecipes()) { error in
             XCTAssertEqual(error as? AppError, .decoder, "Error thrown should be decoder")
         }
     }
