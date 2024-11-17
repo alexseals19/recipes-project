@@ -55,8 +55,9 @@ struct HomeView: View {
         
             ToolbarView(
                 searchText: $viewModel.searchText,
-                sortOption: viewModel.sortOption,
-                sortRecipes: viewModel.sortRecipes
+                cuisineTypes: viewModel.cuisineTypes,
+                cuisineOption: viewModel.cuisineOption,
+                setCuisineAction: viewModel.setCuisineOption
             )
             .shadow(radius: 10)
             .padding(.horizontal)

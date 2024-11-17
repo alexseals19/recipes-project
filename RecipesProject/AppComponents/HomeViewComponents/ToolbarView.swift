@@ -15,21 +15,32 @@ struct ToolbarView: View {
     
     init(
         searchText: Binding<String>,
-        sortOption: SortOption,
-        sortRecipes: @escaping (SortOption) -> Void
+        cuisineTypes: [String],
+        cuisineOption: String?,
+        setCuisineAction: @escaping (String?) -> Void
     ) {
         _searchText = searchText
-        self.sortOption = sortOption
-        self.sortRecipes = sortRecipes
+        self.cuisineTypes = cuisineTypes
+        self.cuisineOption = cuisineOption
+        self.setCuisineAction = setCuisineAction
     }
     
     //MARK: - Properties
     
     @FocusState private var isSearchBarFocused: Bool
     
-    private let sortOption: SortOption
+    private let cuisineTypes: [String]
+    private let cuisineOption: String?
     
-    private let sortRecipes: (SortOption) -> Void
+    private let setCuisineAction: (String?) -> Void
+    
+    private var cuisineOptionDisplay: String {
+        if let cuisineOption {
+            return cuisineOption
+        }
+        
+        return "All"
+    }
     
     private var searchBarPadding: CGFloat {
         isSearchBarFocused ? 10 : 0
@@ -54,15 +65,18 @@ struct ToolbarView: View {
                     Divider()
                         .frame(height: 30)
                     Menu {
-                        Button("Name") {
-                            sortRecipes(.name)
+                        ForEach(cuisineTypes, id: \.self) { cuisine in
+                            Button(cuisine) {
+                                setCuisineAction(cuisine)
+                            }
                         }
-                        Button("Cuisine") {
-                            sortRecipes(.cuisine)
+                        Button("All") {
+                            setCuisineAction(nil)
                         }
+                        
                     } label: {
                         HStack {
-                            Text(sortOption.rawValue)
+                            Text(cuisineOptionDisplay)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                             Image(systemName: "chevron.up.chevron.down")
@@ -75,6 +89,8 @@ struct ToolbarView: View {
                     .background(.ultraThinMaterial)
                     .cornerRadius(15)
                 }
+                
+                
             }
             .foregroundStyle(.primary)
         }
@@ -113,7 +129,8 @@ struct ToolbarView: View {
 #Preview {
     ToolbarView(
         searchText: .constant(""),
-        sortOption: .name,
-        sortRecipes: {_ in}
+        cuisineTypes: [],
+        cuisineOption: nil,
+        setCuisineAction: { _ in }
     )
 }
