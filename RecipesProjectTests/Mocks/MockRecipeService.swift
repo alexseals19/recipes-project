@@ -9,7 +9,7 @@ import Foundation
 @testable import RecipesProject
 
 class MockRecipeService: RecipeService {
-    func fetchRecipes(by: SortOption) async throws -> [Recipe] {
+    func fetchRecipes() async throws -> [Recipe] {
         switch result {
         case .success(let success):
             return success

@@ -12,29 +12,20 @@ import XCTest
 @MainActor
 final class HomeViewModelTests: XCTestCase {
     
-    func test_sortRecipes_by_name() async throws {
+    func test_setCuisineOption_British() async throws {
         
         let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipesUnsorted)))
         
         await sut.onAppear()
         
-        sut.sortRecipes(by: .name)
+        sut.setCuisineOption(cuisine: "British")
         
-        XCTAssertEqual(sut.recipes, Recipe.testRecipesSortedByName)
+        for recipe in sut.recipesFiltered {
+            XCTAssertEqual(recipe.cuisine, "British")
+        }
     }
     
-    func test_sortRecipes_by_cuisine() async throws {
-        
-        let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipesUnsorted)))
-        
-        await sut.onAppear()
-        
-        sut.sortRecipes(by: .cuisine)
-        
-        XCTAssertEqual(sut.recipes, Recipe.testRecipesSortedByCuisine)
-    }
-    
-    func test_recipesFiltered_by_name() async throws {
+    func test_recipesFiltered_by_name_search() async throws {
         
         let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipesUnsorted)))
         
@@ -47,7 +38,7 @@ final class HomeViewModelTests: XCTestCase {
         XCTAssertEqual(sut.recipesFiltered,testRecipesFiltered)
     }
     
-    func test_recipesFiltered_by_cuisine() async throws {
+    func test_recipesFiltered_by_cuisine_search() async throws {
         
         let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipesUnsorted)))
         
