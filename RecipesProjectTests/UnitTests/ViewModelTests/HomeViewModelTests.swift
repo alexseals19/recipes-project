@@ -16,7 +16,7 @@ final class HomeViewModelTests: XCTestCase {
         
         let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipes)))
         
-        await sut.onAppear()
+        await sut.fetchRecipes()
         
         sut.cuisineOption = "British"
                 
@@ -28,7 +28,7 @@ final class HomeViewModelTests: XCTestCase {
         
         let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipes)))
                 
-        await sut.onAppear()
+        await sut.fetchRecipes()
         
         sut.searchText = "Apam"
         
@@ -41,7 +41,7 @@ final class HomeViewModelTests: XCTestCase {
         
         let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipes)))
                 
-        await sut.onAppear()
+        await sut.fetchRecipes()
         
         let filteredRecipes: [Recipe] = [Recipe.rockCakesFixture]
         
@@ -58,7 +58,7 @@ final class HomeViewModelTests: XCTestCase {
         
         let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipes)))
                 
-        await sut.onAppear()
+        await sut.fetchRecipes()
         
         sut.searchText = ""
         

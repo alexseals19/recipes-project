@@ -45,7 +45,7 @@ struct HomeView: View {
             .scrollDisabled(viewModel.isRecipesListEmpty)
             .refreshable {
                 Task {
-                    await viewModel.onRefresh()
+                    await viewModel.fetchRecipes()
                 }
             }
         
@@ -73,7 +73,7 @@ struct HomeView: View {
         })
         .onAppear {
             Task {
-                await viewModel.onAppear()
+                await viewModel.fetchRecipes()
             }
         }
     }
@@ -86,7 +86,7 @@ struct HomeView: View {
                     refreshRotation += 360.0
                 }
                 Task {
-                    await viewModel.onAppear()
+                    await viewModel.fetchRecipes()
                 }
             } label: {
                 Image(systemName: "arrow.clockwise")

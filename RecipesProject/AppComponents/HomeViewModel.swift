@@ -43,12 +43,13 @@ class HomeViewModel: ObservableObject {
         appError?.alertTitle ?? AppError.unknown.alertTitle
     }
     
-    func onRefresh() async {
-        await fetchRecipes()
-    }
-    
-    func onAppear() async {
-        await fetchRecipes()
+    func fetchRecipes() async {
+        do {
+            recipes = try await recipeService.fetchRecipes()
+        } catch {
+            showAlert(for: error)
+        }
+        updateCuisineTypes()
     }
     
     func filterRecipes() {
@@ -97,15 +98,6 @@ class HomeViewModel: ObservableObject {
     }
     
     // MARK: - Functions
-    
-    private func fetchRecipes() async {
-        do {
-            recipes = try await recipeService.fetchRecipes()
-        } catch {
-            showAlert(for: error)
-        }
-        updateCuisineTypes()
-    }
     
     private func showAlert(for error: Error) {
         if let error = error as? AppError {

@@ -39,7 +39,6 @@ struct ToolbarView: View {
         if let cuisineOption {
             return cuisineOption
         }
-        
         return "All"
     }
     
@@ -67,12 +66,37 @@ struct ToolbarView: View {
                         .frame(height: 30)
                     Menu {
                         ForEach(cuisineTypes, id: \.self) { cuisine in
-                            Button(cuisine) {
+                            
+                            Button {
                                 cuisineOption = cuisine
+                            } label: {
+                                HStack {
+                                    Text(cuisine)
+                                        .font(.body)
+                                    if cuisineOption == cuisine {
+                                        Image(systemName: "checkmark")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    }
+                                    Spacer()
+                                }
                             }
                         }
-                        Button("All") {
+                        Button {
                             cuisineOption = nil
+                        } label: {
+                            HStack {
+                                Text("All")
+                                    .font(.body)
+                                if cuisineOption == nil {
+                                    Image(systemName: "checkmark")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 15, height: 15)
+                                }
+                                Spacer()
+                            }
                         }
                         
                     } label: {
