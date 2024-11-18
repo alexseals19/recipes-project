@@ -11,11 +11,7 @@ import Foundation
 extension Recipe {
     
     static let testRecipes: [Recipe] = [apamBalikFixture, breadAndButterPuddingFixture, christmasCakeFixture, nanaimoBarsFixture, rockCakesFixture]
-    
-    static let testRecipesFilteredBySearch: [Recipe] = [apamBalikFixture]
-    
-    static let testRecipesFilterdByCuisine: [Recipe] = [breadAndButterPuddingFixture, christmasCakeFixture, rockCakesFixture]
-    
+
     static let rockCakesFixture: Recipe = Recipe(
         cuisine: "British",
         name: "Rock Cakes",

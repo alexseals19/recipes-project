@@ -18,9 +18,11 @@ final class HomeViewModelTests: XCTestCase {
         
         await sut.fetchRecipes()
         
+        let expectedRecipesDisplayed: [Recipe] = [Recipe.breadAndButterPuddingFixture, Recipe.christmasCakeFixture, Recipe.rockCakesFixture]
+        
         sut.cuisineOption = "British"
                 
-        XCTAssertEqual(sut.recipesDisplayed, Recipe.testRecipesFilterdByCuisine)
+        XCTAssertEqual(sut.recipesDisplayed, expectedRecipesDisplayed)
         
     }
     
@@ -30,11 +32,13 @@ final class HomeViewModelTests: XCTestCase {
                 
         await sut.fetchRecipes()
         
+        let expectedRecipesDisplayed: [Recipe] = [Recipe.apamBalikFixture]
+        
         sut.searchText = "Apam"
         
         sut.filterRecipes()
                 
-        XCTAssertEqual(sut.recipesDisplayed, Recipe.testRecipesFilteredBySearch)
+        XCTAssertEqual(sut.recipesDisplayed, expectedRecipesDisplayed)
     }
     
     func test_filterRecipes_by_search_and_cuisine() async throws {
@@ -43,7 +47,7 @@ final class HomeViewModelTests: XCTestCase {
                 
         await sut.fetchRecipes()
         
-        let filteredRecipes: [Recipe] = [Recipe.rockCakesFixture]
+        let expectedRecipesDisplayed: [Recipe] = [Recipe.rockCakesFixture]
         
         sut.cuisineOption = "British"
         
@@ -51,7 +55,7 @@ final class HomeViewModelTests: XCTestCase {
         
         sut.filterRecipes()
                 
-        XCTAssertEqual(sut.recipesDisplayed, filteredRecipes)
+        XCTAssertEqual(sut.recipesDisplayed, expectedRecipesDisplayed)
     }
     
     func test_filterRecipes_empty_search() async throws {
