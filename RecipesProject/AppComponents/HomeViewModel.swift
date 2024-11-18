@@ -12,8 +12,10 @@ import SwiftUI
 class HomeViewModel: ObservableObject {
     
     // MARK: - API
-    @Published var recipes: [Recipe] = []
-    @Published var recipesDisplayed: [Recipe]?
+    
+    @Published var recipesDisplayed: [Recipe] = []
+    
+    @Published var searchText: String = ""
     
     @Published var isAlertShown = false {
         didSet {
@@ -23,15 +25,15 @@ class HomeViewModel: ObservableObject {
                 
     @Published var cuisineOption: String? {
         didSet {
-            if let cuisineOption {
-                filterRecipes(for: cuisineOption)
-            } else {
-                filterRecipes(for: "")
-            }
+            filterRecipes()
         }
     }
     
     var cuisineTypes: [String] = []
+    
+    var isRecipesListEmpty: Bool {
+        recipes.isEmpty
+    }
     
     var alertMessage: String {
         appError?.alertMessage ?? AppError.unknown.alertMessage
@@ -41,15 +43,16 @@ class HomeViewModel: ObservableObject {
         appError?.alertTitle ?? AppError.unknown.alertTitle
     }
     
-    func onAppear() async {
+    func onRefresh() async {
         await fetchRecipes()
-        updateCuisineTypes()
     }
     
-    func filterRecipes(for searchText: String) {
-        if searchText.isEmpty, cuisineOption == nil {
-            recipesDisplayed = nil
-        } else if !searchText.isEmpty, let cuisineOption {
+    func onAppear() async {
+        await fetchRecipes()
+    }
+    
+    func filterRecipes() {
+        if !searchText.isEmpty, let cuisineOption {
             let recipesBySearch = recipes.filter {
                 $0.name.lowercased().contains(searchText.lowercased()) ||
                 $0.cuisine.lowercased().contains(searchText.lowercased())
@@ -57,16 +60,18 @@ class HomeViewModel: ObservableObject {
             recipesDisplayed = recipesBySearch.filter {
                 $0.cuisine.contains(cuisineOption)
             }
-        } else {
+        } else if let cuisineOption {
+            recipesDisplayed = recipes.filter {
+                $0.cuisine.contains(cuisineOption)
+            }
+        } else if !searchText.isEmpty {
             recipesDisplayed = recipes.filter {
                 $0.name.lowercased().contains(searchText.lowercased()) ||
                 $0.cuisine.lowercased().contains(searchText.lowercased())
             }
+        } else {
+            recipesDisplayed = recipes
         }
-    }
-    
-    func setCuisineOption(cuisine: String?) {
-        cuisineOption = cuisine
     }
     
     init(recipeService: RecipeService) {
@@ -75,7 +80,15 @@ class HomeViewModel: ObservableObject {
     
     // MARK: - Properties
     
+    private var recipes: [Recipe] = [] {
+        didSet {
+            filterRecipes()
+        }
+    }
+    
     private var recipeService: RecipeService
+    
+    private var isFilteredBySearch: Bool = false
     
     private var appError: AppError? {
         didSet {
@@ -87,11 +100,11 @@ class HomeViewModel: ObservableObject {
     
     private func fetchRecipes() async {
         do {
-            let tempRecipes = try await recipeService.fetchRecipes()
-            recipes = tempRecipes
+            recipes = try await recipeService.fetchRecipes()
         } catch {
             showAlert(for: error)
         }
+        updateCuisineTypes()
     }
     
     private func showAlert(for error: Error) {
@@ -110,7 +123,6 @@ class HomeViewModel: ObservableObject {
                 cuisineTypes.append(recipe.cuisine)
             }
         }
-        
         cuisineTypes.sort { lhs, rhs in
             lhs > rhs
         }

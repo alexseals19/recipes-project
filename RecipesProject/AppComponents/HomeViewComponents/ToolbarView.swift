@@ -10,29 +10,30 @@ import SwiftUI
 struct ToolbarView: View {
     
     //MARK: - API
+    
+    @Binding var searchText: String
+    @Binding var cuisineOption: String?
         
     init(
         cuisineTypes: [String],
-        cuisineOption: String?,
-        setCuisineAction: @escaping (String?) -> Void,
-        searchRecipesAction: @escaping (String) -> Void
+        searchText: Binding<String>,
+        cuisineOption: Binding<String?>,
+        filterRecipes: @escaping () -> Void
     ) {
         self.cuisineTypes = cuisineTypes
-        self.cuisineOption = cuisineOption
-        self.setCuisineAction = setCuisineAction
-        self.searchRecipesAction = searchRecipesAction
+        _searchText = searchText
+        _cuisineOption = cuisineOption
+        self.filterRecipes = filterRecipes
     }
     
     //MARK: - Properties
-    @State private var searchText: String = ""
+    
     
     @FocusState private var isSearchBarFocused: Bool
     
     private let cuisineTypes: [String]
-    private let cuisineOption: String?
     
-    private let searchRecipesAction: (String) -> Void
-    private let setCuisineAction: (String?) -> Void
+    private let filterRecipes: () -> Void
     
     private var cuisineOptionDisplay: String {
         if let cuisineOption {
@@ -67,11 +68,11 @@ struct ToolbarView: View {
                     Menu {
                         ForEach(cuisineTypes, id: \.self) { cuisine in
                             Button(cuisine) {
-                                setCuisineAction(cuisine)
+                                cuisineOption = cuisine
                             }
                         }
                         Button("All") {
-                            setCuisineAction(nil)
+                            cuisineOption = nil
                         }
                         
                     } label: {
@@ -112,7 +113,7 @@ struct ToolbarView: View {
                     if !searchText.isEmpty {
                         Button {
                             searchText = ""
-                            searchRecipesAction(searchText)
+                            filterRecipes()
                         } label: {
                             Image(systemName: "xmark")
                                 .resizable()
@@ -126,7 +127,7 @@ struct ToolbarView: View {
             }
             .submitLabel(.search)
             .onSubmit {
-                searchRecipesAction(searchText)
+                filterRecipes()
             }
     }
 }
@@ -134,8 +135,8 @@ struct ToolbarView: View {
 #Preview {
     ToolbarView(
         cuisineTypes: [],
-        cuisineOption: nil,
-        setCuisineAction: { _ in },
-        searchRecipesAction: { _ in }
+        searchText: .constant(""),
+        cuisineOption: .constant(nil),
+        filterRecipes: {}
     )
 }

@@ -18,8 +18,8 @@ final class HomeViewModelTests: XCTestCase {
         
         await sut.onAppear()
         
-        sut.setCuisineOption(cuisine: "British")
-        
+        sut.cuisineOption = "British"
+                
         XCTAssertEqual(sut.recipesDisplayed, Recipe.testRecipesFilterdByCuisine)
         
     }
@@ -30,9 +30,28 @@ final class HomeViewModelTests: XCTestCase {
                 
         await sut.onAppear()
         
-        sut.filterRecipes(for: "Apam")
+        sut.searchText = "Apam"
+        
+        sut.filterRecipes()
                 
         XCTAssertEqual(sut.recipesDisplayed, Recipe.testRecipesFilteredBySearch)
+    }
+    
+    func test_filterRecipes_by_search_and_cuisine() async throws {
+        
+        let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipes)))
+                
+        await sut.onAppear()
+        
+        let filteredRecipes: [Recipe] = [Recipe.rockCakesFixture]
+        
+        sut.cuisineOption = "British"
+        
+        sut.searchText = "Rock Cakes"
+        
+        sut.filterRecipes()
+                
+        XCTAssertEqual(sut.recipesDisplayed, filteredRecipes)
     }
     
     func test_filterRecipes_empty_search() async throws {
@@ -41,8 +60,10 @@ final class HomeViewModelTests: XCTestCase {
                 
         await sut.onAppear()
         
-        sut.filterRecipes(for: "")
+        sut.searchText = ""
+        
+        sut.filterRecipes()
                 
-        XCTAssertEqual(sut.recipesDisplayed, nil)
+        XCTAssertEqual(sut.recipesDisplayed, Recipe.testRecipes)
     }
 }

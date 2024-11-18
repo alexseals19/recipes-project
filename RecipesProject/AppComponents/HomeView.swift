@@ -23,17 +23,6 @@ struct HomeView: View {
     
     @FocusState private var isSearchBarFocused: Bool
     
-    private var recipesDisplayed: [Recipe] {
-        if let recipeList = viewModel.recipesDisplayed {
-            return recipeList
-        }
-        return viewModel.recipes
-    }
-    
-    private var isRecipesListEmpty: Bool {
-        viewModel.recipes.isEmpty
-    }
-    
     private let hapticImpact = UIImpactFeedbackGenerator(style: .heavy)
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
     
@@ -44,7 +33,7 @@ struct HomeView: View {
         ZStack {
             ScrollView() {
                 LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(recipesDisplayed) { recipe in
+                    ForEach(viewModel.recipesDisplayed) { recipe in
                         RecipeCellView(recipe: recipe)
                     }
                 }
@@ -53,25 +42,25 @@ struct HomeView: View {
             }
             .padding(.top, 1)
             .background(Gradient(colors: [.gray.opacity(0.2), .clear]))
-            .scrollDisabled(isRecipesListEmpty)
+            .scrollDisabled(viewModel.isRecipesListEmpty)
             .refreshable {
                 Task {
-                    await viewModel.onAppear()
+                    await viewModel.onRefresh()
                 }
             }
         
             ToolbarView(
                 cuisineTypes: viewModel.cuisineTypes,
-                cuisineOption: viewModel.cuisineOption,
-                setCuisineAction: viewModel.setCuisineOption,
-                searchRecipesAction: viewModel.filterRecipes
+                searchText: $viewModel.searchText,
+                cuisineOption: $viewModel.cuisineOption,
+                filterRecipes: viewModel.filterRecipes
             )
             .shadow(radius: 10)
             .padding(.horizontal)
             
-            if isRecipesListEmpty {
+            if viewModel.isRecipesListEmpty {
                 emptyListView
-            } else if recipesDisplayed.isEmpty {
+            } else if viewModel.recipesDisplayed.isEmpty {
                 Text("Sorry, no recipes match your search term.")
                     .font(.headline)
             }
