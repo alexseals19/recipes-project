@@ -64,7 +64,6 @@ struct HomeView: View {
                 Text("Sorry, no recipes match your search term.")
                     .font(.headline)
             }
-            
         }
         .alert(viewModel.alertTitle, isPresented: $viewModel.isAlertShown, actions: {
             Button("OK", role: .cancel) {}
@@ -104,7 +103,6 @@ struct HomeView: View {
                 .font(.headline)
         }
     }
-    
 }
 
 #Preview {

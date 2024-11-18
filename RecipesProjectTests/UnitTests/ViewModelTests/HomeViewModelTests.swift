@@ -70,4 +70,13 @@ final class HomeViewModelTests: XCTestCase {
                 
         XCTAssertEqual(sut.recipesDisplayed, Recipe.testRecipes)
     }
+    
+    func test_isAlertShown() async throws {
+        
+        let sut = HomeViewModel(recipeService: MockRecipeService(result: .failure(.decoder)))
+                
+        await sut.fetchRecipes()
+                
+        XCTAssertEqual(sut.isAlertShown, true)
+    }
 }

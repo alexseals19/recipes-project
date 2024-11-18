@@ -26,7 +26,6 @@ struct RecipeDetailView: View {
     
     var body: some View {
         VStack {
-            
             HStack(alignment: .top) {
                 Text(recipe.name)
                     .font(.title3)
