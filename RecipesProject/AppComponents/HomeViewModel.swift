@@ -12,48 +12,26 @@ import SwiftUI
 class HomeViewModel: ObservableObject {
     
     // MARK: - API
-    
-    @Published var recipes: [Recipe] = [] {
-        didSet {
-            updateCuisineTypes()
-        }
-    }
+    @Published var recipes: [Recipe] = []
+    @Published var recipesDisplayed: [Recipe]?
     
     @Published var isAlertShown = false {
         didSet {
             if !isAlertShown { appError = nil }
         }
     }
-            
-    @Published var searchText: String = ""
-    
-    @Published var cuisineOption: String?
-    
-    var cuisineTypes: [String] = []
-        
-    var recipesFiltered: [Recipe] {
-        if searchText.isEmpty, cuisineOption == nil {
-            return recipes
-        } else if !searchText.isEmpty, let cuisineOption {
-            let recipesBySearch = recipes.filter {
-                $0.name.lowercased().contains(searchText.lowercased()) ||
-                $0.cuisine.lowercased().contains(searchText.lowercased())
-            }
-            
-            return recipesBySearch.filter {
-                $0.cuisine.contains(cuisineOption)
-            }
-        }  else if let cuisineOption {
-            return recipes.filter {
-                $0.cuisine.contains(cuisineOption)
-            }
-        } else {
-            return recipes.filter {
-                $0.name.lowercased().contains(searchText.lowercased()) ||
-                $0.cuisine.lowercased().contains(searchText.lowercased())
+                
+    @Published var cuisineOption: String? {
+        didSet {
+            if let cuisineOption {
+                filterRecipes(for: cuisineOption)
+            } else {
+                filterRecipes(for: "")
             }
         }
     }
+    
+    var cuisineTypes: [String] = []
     
     var alertMessage: String {
         appError?.alertMessage ?? AppError.unknown.alertMessage
@@ -65,6 +43,26 @@ class HomeViewModel: ObservableObject {
     
     func onAppear() async {
         await fetchRecipes()
+        updateCuisineTypes()
+    }
+    
+    func filterRecipes(for searchText: String) {
+        if searchText.isEmpty, cuisineOption == nil {
+            recipesDisplayed = nil
+        } else if !searchText.isEmpty, let cuisineOption {
+            let recipesBySearch = recipes.filter {
+                $0.name.lowercased().contains(searchText.lowercased()) ||
+                $0.cuisine.lowercased().contains(searchText.lowercased())
+            }
+            recipesDisplayed = recipesBySearch.filter {
+                $0.cuisine.contains(cuisineOption)
+            }
+        } else {
+            recipesDisplayed = recipes.filter {
+                $0.name.lowercased().contains(searchText.lowercased()) ||
+                $0.cuisine.lowercased().contains(searchText.lowercased())
+            }
+        }
     }
     
     func setCuisineOption(cuisine: String?) {
@@ -84,7 +82,6 @@ class HomeViewModel: ObservableObject {
             if appError != nil { isAlertShown = true }
         }
     }
-    
     
     // MARK: - Functions
     
@@ -106,7 +103,6 @@ class HomeViewModel: ObservableObject {
     }
     
     private func updateCuisineTypes() {
-        
         cuisineTypes.removeAll()
         
         for recipe in recipes {
@@ -119,10 +115,4 @@ class HomeViewModel: ObservableObject {
             lhs > rhs
         }
     }
-    
-}
-
-enum SortOption: String {
-    case name = "Name"
-    case cuisine = "Cuisine"
 }

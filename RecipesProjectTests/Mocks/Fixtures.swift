@@ -10,11 +10,11 @@ import Foundation
 
 extension Recipe {
     
-    static let testRecipesUnsorted: [Recipe] = [rockCakesFixture, apamBalikFixture, nanaimoBarsFixture]
+    static let testRecipes: [Recipe] = [apamBalikFixture, breadAndButterPuddingFixture, christmasCakeFixture, nanaimoBarsFixture, rockCakesFixture]
     
-    static let testRecipesSortedByName: [Recipe] = [apamBalikFixture, nanaimoBarsFixture, rockCakesFixture]
+    static let testRecipesFilteredBySearch: [Recipe] = [apamBalikFixture]
     
-    static let testRecipesSortedByCuisine: [Recipe] = [rockCakesFixture, nanaimoBarsFixture, apamBalikFixture]
+    static let testRecipesFilterdByCuisine: [Recipe] = [breadAndButterPuddingFixture, christmasCakeFixture, rockCakesFixture]
     
     static let rockCakesFixture: Recipe = Recipe(
         cuisine: "British",
@@ -46,6 +46,25 @@ extension Recipe {
         youtubeUrl: URL(string: "https://www.youtube.com/watch?v=MMrE4I1ZtWo")
     )
     
+    static let breadAndButterPuddingFixture: Recipe = Recipe(
+        cuisine: "British",
+        name: "Bread and Butter Pudding",
+        photoUrlLarge: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/10818213-3c03-47ae-a7b1-230baa981226/large.jpg"),
+        photoUrlSmall: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/10818213-3c03-47ae-a7b1-230baa981226/small.jpg"),
+        uuid: UUID(),
+        sourceUrl: URL(string: "https://cooking.nytimes.com/recipes/1018529-coq-au-vin"),
+        youtubeUrl: URL(string: "https://www.youtube.com/watch?v=Vz5W1-BmOE4")
+    )
+    
+    static let christmasCakeFixture: Recipe = Recipe(
+        cuisine: "British",
+        name: "Christmas Cake",
+        photoUrlLarge: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/aaa5dab0-febe-4fc4-800d-36e293764f98/large.jpg"),
+        photoUrlSmall: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/aaa5dab0-febe-4fc4-800d-36e293764f98/small.jpg"),
+        uuid: UUID(),
+        sourceUrl: URL(string: "https://www.bbcgoodfood.com/recipes/angela-nilsens-christmas-cake"),
+        youtubeUrl: URL(string: "https://www.youtube.com/watch?v=34yeL8TstO0")
+    )
 }
 
 extension Data {

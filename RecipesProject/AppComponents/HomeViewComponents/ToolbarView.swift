@@ -10,28 +10,28 @@ import SwiftUI
 struct ToolbarView: View {
     
     //MARK: - API
-    
-    @Binding var searchText: String
-    
+        
     init(
-        searchText: Binding<String>,
         cuisineTypes: [String],
         cuisineOption: String?,
-        setCuisineAction: @escaping (String?) -> Void
+        setCuisineAction: @escaping (String?) -> Void,
+        searchRecipesAction: @escaping (String) -> Void
     ) {
-        _searchText = searchText
         self.cuisineTypes = cuisineTypes
         self.cuisineOption = cuisineOption
         self.setCuisineAction = setCuisineAction
+        self.searchRecipesAction = searchRecipesAction
     }
     
     //MARK: - Properties
+    @State private var searchText: String = ""
     
     @FocusState private var isSearchBarFocused: Bool
     
     private let cuisineTypes: [String]
     private let cuisineOption: String?
     
+    private let searchRecipesAction: (String) -> Void
     private let setCuisineAction: (String?) -> Void
     
     private var cuisineOptionDisplay: String {
@@ -112,6 +112,7 @@ struct ToolbarView: View {
                     if !searchText.isEmpty {
                         Button {
                             searchText = ""
+                            searchRecipesAction(searchText)
                         } label: {
                             Image(systemName: "xmark")
                                 .resizable()
@@ -123,14 +124,18 @@ struct ToolbarView: View {
                     }
                 }
             }
+            .submitLabel(.search)
+            .onSubmit {
+                searchRecipesAction(searchText)
+            }
     }
 }
 
 #Preview {
     ToolbarView(
-        searchText: .constant(""),
         cuisineTypes: [],
         cuisineOption: nil,
-        setCuisineAction: { _ in }
+        setCuisineAction: { _ in },
+        searchRecipesAction: { _ in }
     )
 }

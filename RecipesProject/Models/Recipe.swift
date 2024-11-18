@@ -61,7 +61,7 @@ extension Recipe {
         case "Croatian":
             return "CR"
         default:
-            return "USA"
+            return "GLOBE"
         }
     }
 }

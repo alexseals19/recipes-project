@@ -12,43 +12,37 @@ import XCTest
 @MainActor
 final class HomeViewModelTests: XCTestCase {
     
-    func test_setCuisineOption_British() async throws {
+    func test_filterRecipes_by_cuisine() async throws {
         
-        let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipesUnsorted)))
+        let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipes)))
         
         await sut.onAppear()
         
         sut.setCuisineOption(cuisine: "British")
         
-        for recipe in sut.recipesFiltered {
-            XCTAssertEqual(recipe.cuisine, "British")
-        }
+        XCTAssertEqual(sut.recipesDisplayed, Recipe.testRecipesFilterdByCuisine)
+        
     }
     
-    func test_recipesFiltered_by_name_search() async throws {
+    func test_filterRecipes_by_search_term() async throws {
         
-        let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipesUnsorted)))
-        
-        let testRecipesFiltered: [Recipe] = [Recipe.apamBalikFixture]
-        
+        let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipes)))
+                
         await sut.onAppear()
         
-        sut.searchText = "Apam"
+        sut.filterRecipes(for: "Apam")
                 
-        XCTAssertEqual(sut.recipesFiltered,testRecipesFiltered)
+        XCTAssertEqual(sut.recipesDisplayed, Recipe.testRecipesFilteredBySearch)
     }
     
-    func test_recipesFiltered_by_cuisine_search() async throws {
+    func test_filterRecipes_empty_search() async throws {
         
-        let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipesUnsorted)))
-        
-        let testRecipesFiltered: [Recipe] = [Recipe.nanaimoBarsFixture]
-        
+        let sut = HomeViewModel(recipeService: MockRecipeService(result: .success(Recipe.testRecipes)))
+                
         await sut.onAppear()
         
-        sut.searchText = "Canadian"
+        sut.filterRecipes(for: "")
                 
-        XCTAssertEqual(sut.recipesFiltered, testRecipesFiltered)
+        XCTAssertEqual(sut.recipesDisplayed, nil)
     }
-    
 }

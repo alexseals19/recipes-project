@@ -23,7 +23,14 @@ struct HomeView: View {
     
     @FocusState private var isSearchBarFocused: Bool
     
-    private var isListEmpty: Bool {
+    private var recipesDisplayed: [Recipe] {
+        if let recipeList = viewModel.recipesDisplayed {
+            return recipeList
+        }
+        return viewModel.recipes
+    }
+    
+    private var isRecipesListEmpty: Bool {
         viewModel.recipes.isEmpty
     }
     
@@ -37,7 +44,7 @@ struct HomeView: View {
         ZStack {
             ScrollView() {
                 LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(viewModel.recipesFiltered) { recipe in
+                    ForEach(recipesDisplayed) { recipe in
                         RecipeCellView(recipe: recipe)
                     }
                 }
@@ -46,7 +53,7 @@ struct HomeView: View {
             }
             .padding(.top, 1)
             .background(Gradient(colors: [.gray.opacity(0.2), .clear]))
-            .scrollDisabled(isListEmpty)
+            .scrollDisabled(isRecipesListEmpty)
             .refreshable {
                 Task {
                     await viewModel.onAppear()
@@ -54,17 +61,21 @@ struct HomeView: View {
             }
         
             ToolbarView(
-                searchText: $viewModel.searchText,
                 cuisineTypes: viewModel.cuisineTypes,
                 cuisineOption: viewModel.cuisineOption,
-                setCuisineAction: viewModel.setCuisineOption
+                setCuisineAction: viewModel.setCuisineOption,
+                searchRecipesAction: viewModel.filterRecipes
             )
             .shadow(radius: 10)
             .padding(.horizontal)
             
-            if viewModel.recipes.isEmpty {
+            if isRecipesListEmpty {
                 emptyListView
+            } else if recipesDisplayed.isEmpty {
+                Text("Sorry, no recipes match your search term.")
+                    .font(.headline)
             }
+            
         }
         .alert(viewModel.alertTitle, isPresented: $viewModel.isAlertShown, actions: {
             Button("OK", role: .cancel) {}
